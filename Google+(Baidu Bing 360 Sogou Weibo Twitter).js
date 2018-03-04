@@ -1,18 +1,19 @@
 // ==UserScript==
-// @name        Google+(Baidu Bing Youdao Weibo Twitter)
-// @namespace   https://github.com/guyigenius/Google-Baidu-Bing-Youdao-Weibo-Twitter
-// @version     1.5.2
-// @description Show results from Baidu, Bing, Youdao, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、有道、必应、微博和Twitter的搜索结果。
-// @include     http*://www.google.tld/search?*
-// @include     http*://www.google.*/*q=*
+// @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
+// @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
+// @version     1.5.3
+// @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。 
+// @include     https://www.google.*/*q=*
 // @license     MPL
-// @grant       GM_log
-// @grant       GM_xmlhttpRequest
 // @connect     www.baidu.com
-// @connect     www.sogou.com
 // @connect     www.bing.com
+// @connect     www.so.com
+// @connect     www.sogou.com
 // @connect     t.zhongsou.com
 // @connect     www.zsyunyue.com
+// @connect     twitter.com
+// @grant       GM_log
+// @grant       GM_xmlhttpRequest
 // ==/UserScript==
 
 (function () {
@@ -49,11 +50,11 @@
 
 
 
-    Al_xSearch.push(['Baidu', 1, "baiduResult", 'http://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em']);
+    Al_xSearch.push(['Baidu', 1, "baiduResult", 'https://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em']);
+    Al_xSearch.push(['Bing', 1, "bingResult", 'https://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
     Al_xSearch.push(['Youdao', 0, "youdaoResult", 'http://www.youdao.com/search?q=--keyword--', '//ol[@id="results"]/li[--i--]', 'span.hl']);
-    Al_xSearch.push(['360', 0, "360Result", 'http://www.haosou.com/s?ie=utf-8&q=--keyword--', '//ul[@id="m-result"]/li[--i--]', 'em']);
-    Al_xSearch.push(['Sogou', 1, "sogouResult", 'http://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em']);
-    Al_xSearch.push(['Bing', 1, "bingResult", 'http://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
+    Al_xSearch.push(['360', 1, "360Result", 'https://www.so.com/s?ie=utf-8&q=--keyword--', '//li[@class="res-list"][--i--]', 'em']);
+    Al_xSearch.push(['Sogou', 1, "sogouResult", 'https://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em']);
     Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em']);
     Al_xSearch.push(['ZSWeibo', 1, "weiboResult", 'http://t.zhongsou.com/wb?w=--keyword--', '//div[@class="main_scenery_left"]/div[@class="godreply_on"][--i--]', 'font[color="red"]']);
 

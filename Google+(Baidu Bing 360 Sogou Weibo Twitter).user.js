@@ -1,14 +1,16 @@
 // ==UserScript==
 // @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
 // @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
-// @version     1.5.4
+// @version     1.5.5
 // @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。
-// @include     https://www.google.*/*q=*
+// @include     /^https:\/\/www\.google\..*?q=.*?$/
 // @license     MPL
 // @connect     www.baidu.com
 // @connect     www.bing.com
 // @connect     www.so.com
 // @connect     www.sogou.com
+// @connect     www.google.com.hk
+// @connect     weibo.com
 // @connect     twitter.com
 // @grant       GM_log
 // @grant       GM_xmlhttpRequest
@@ -34,8 +36,6 @@
     // Wait for how many minisecond to obtain results | 设置获取搜索结果超时时间（毫秒）。
     var resultTimeout = 30000;
 
-    var Al_xSearch = [];
-
     // Select which engines' results will be obtained from | 设置外部搜索引擎。
     // Structure: Al_xSearch[x] = [[0],[1],[2],[3],[4],[5]];
     // Rules: Al_xSearch[x][0] - the name of the engine | 搜索引擎的名字。
@@ -45,14 +45,12 @@
     //        Al_xSearch[x][4] - the xpath to find a result | 搜索结果的 xpath。
     //        Al_xSearch[x][5] - the highlight pattern (selector) | 高亮部分的格式（选择器）。
     //        x - the displaying order. | 显示顺序。
-
-
-
-    Al_xSearch.push(['Baidu', 1, "baiduResult", 'https://www.baidu.com/s?wd=--keyword--&ie=utf-8', '//*[@id="--i--"]', 'em']);
+    var Al_xSearch = [];
+    Al_xSearch.push(['Baidu', 1, "baiduResult", 'https://www.baidu.com/s?wd=--keyword--', '//*[@id="--i--"]', 'em']);
     Al_xSearch.push(['Bing', 1, "bingResult", 'https://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
-    Al_xSearch.push(['360', 1, "360Result", 'https://www.so.com/s?ie=utf-8&q=--keyword--', '//li[@class="res-list"][--i--]', 'em']);
-    Al_xSearch.push(['Sogou', 1, "sogouResult", 'https://www.sogou.com/web?query=--keyword--&ie=utf8&pid=sogou-netb-bd85282513da4089-9039', '//div[@class="results"]/div[--i--]', 'em']);
-    Al_xSearch.push(['GoogleCN', 0, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@id="ires"]/ol/li[--i--]', 'em']);
+    Al_xSearch.push(['360', 1, "360Result", 'https://www.so.com/s?q=--keyword--', '//li[@class="res-list"][--i--]', 'em']);
+    Al_xSearch.push(['Sogou', 1, "sogouResult", 'https://www.sogou.com/web?query=--keyword--', '//div[@class="results"]/div[--i--]', 'em']);
+    Al_xSearch.push(['GoogleCN', 1, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@class="g"][--i--]', 'em']);
 
     //  ===Config END | 设置结束===
     var isHash = !!document.location.hash;
@@ -62,10 +60,10 @@
     function go() {
 
         // rebuild array
-        var A_xSearch = new Array();
-        for (var l = 0, m = 0; l < Al_xSearch.length; l++) { //log('53:'+l+','+m);
+        var A_xSearch = [];
+        for (let l = 0, m = 0; l < Al_xSearch.length; l++) { //log('53:'+l+','+m);
             if (!Al_xSearch[l][1]) continue;
-            A_xSearch[m] = new Array(Al_xSearch[l][0], Al_xSearch[l][1], Al_xSearch[l][2], Al_xSearch[l][3], Al_xSearch[l][4], Al_xSearch[l][5]);  //log('59:'+Al_xSearch[l][3]+','+A_xSearch[m][3]);
+            A_xSearch[m] = [Al_xSearch[l][0], Al_xSearch[l][1], Al_xSearch[l][2], Al_xSearch[l][3], Al_xSearch[l][4], Al_xSearch[l][5]];  //log('59:'+Al_xSearch[l][3]+','+A_xSearch[m][3]);
             m += 1;
         }
         var A_xSearch_l = A_xSearch.length; //log('61:'+A_xSearch_l);
@@ -88,44 +86,46 @@
         // Style sheets
         var bstyle = 'position:absolute;top:0px;left:810px;background:white;z-index:10;width:' + b_width + 'px;';
         var cstyle = 'border-top:1px solid #7799cc;background:#aaccff;';
-        var close_style = _xID + ' .close{float:right;padding:0 10px;}'
-            + _xID + ' .close:hover{outline:1px solid #731616;outline-offset:-1px;background-color:#F28E8E!important;color:#731616!important;}';
-        var glo_style = _xID + ' p, ' + _xID + ' ul {margin: 0; padding:0;}'
-            + _xID + ' a{color:#2626A8;}' + _xID + ' li{list-style:none outside none;}'
-            + _xID + '{line-height: 130%;border-bottom:1px solid #AACCFF;border-left:1px dotted #C9D7F1;}'
-            + _xID + ' div._result *{position:relative!important;}'
-            + _xID + ' div._result, .GoogleSpecial>div{max-height:120px;background:white;overflow:hidden;transition:max-height 0.2s ease 1s;}'
-            + _xID + ' ._resultMore{max-height:none!important;}'
-            + _xID + ' div._result h3, ' + _xID + ' div._result h2{font-size:13pt!important; border-bottom: 1px solid white; margin-bottom:2px;}'
-            + _xID + ' div._result:hover, .GoogleSpecial>div:hover{max-height: 100000px; margin-bottom:0px; padding-bottom:5px; background: #F0F7F9; transition:max-height 0.2s ease 0.1s;}'
-            + _xID + ' div._result:hover h3, ' + _xID + ' div._result:hover h2{border-bottom: 1px solid #a7cDd6;}'
-            + _xID + '>div>*{height: auto!important;}._hilire{background:#ffd!important;background:-moz-linear-gradient(top, #ffd, white)!important;background:-webkit-gradient(linear, 0 0, 0 100%, from(#ffd), to(white))!important;}'
-            + _xID + ' ._re_hide>div,' + _xID + ' ._no_result{display:none;}'
-            + _xID + ' ._re_more{display:block;height:20px;width:100%;text-align:center;background:#ddd;cursor:pointer;}'
-            + _xID + ' ._re_more:hover{background:#F0F7F9!important;}'
-            + _xID + ' ._re_hide ._re_more{background:white;}'
-            + _xID + ' div._result+div._result,' + _xID + ' ._resultMore {border-top: 1px solid #aaccff;}'
-            + _xID + ' div._result,.GoogleSpecial>div{margin-bottom:5px;}'
-            + _xID + ' .GoogleSpecial a {margin-left:0px;}';// + _xID + ':hover{width:400px !important;border-left: 2px solid #7799cc;}';
+        var close_style = _xID + ' .close{float:right;padding:0 10px;}' +
+            _xID + ' .close:hover{outline:1px solid #731616;outline-offset:-1px;background-color:#F28E8E!important;color:#731616!important;}';
+        var glo_style = _xID + ' p, ' + _xID + ' ul {margin: 0; padding:0;}' +
+            _xID + ' a{color:#2626A8;}' + _xID + ' li{list-style:none outside none;}' +
+            _xID + '{line-height: 130%;border-bottom:1px solid #AACCFF;border-left:1px dotted #C9D7F1;}' +
+            _xID + ' div._result *{position:relative!important;}' +
+            _xID + ' div._result, .GoogleSpecial>div{max-height:120px;background:white;overflow:hidden;transition:max-height 0.2s ease 1s;}' +
+            _xID + ' ._resultMore{max-height:none!important;}' +
+            _xID + ' div._result h3, ' + _xID + ' div._result h2{font-size:13pt!important; border-bottom: 1px solid white; margin-bottom:2px;}' +
+            _xID + ' div._result:hover, .GoogleSpecial>div:hover{max-height: 100000px; margin-bottom:0px; padding-bottom:5px; background: #F0F7F9; transition:max-height 0.2s ease 0.1s;}' +
+            _xID + ' div._result:hover h3, ' + _xID + ' div._result:hover h2{border-bottom: 1px solid #a7cDd6;}' +
+            _xID + '>div>*{height: auto!important;}._hilire{background:#ffd!important;background:-moz-linear-gradient(top, #ffd, white)!important;background:-webkit-gradient(linear, 0 0, 0 100%, from(#ffd), to(white))!important;}' +
+            _xID + ' ._re_hide>div,' + _xID + ' ._no_result{display:none;}' +
+            _xID + ' ._re_more{display:block;height:20px;width:100%;text-align:center;background:#ddd;cursor:pointer;}' +
+            _xID + ' ._re_more:hover{background:#F0F7F9!important;}' +
+            _xID + ' ._re_hide ._re_more{background:white;}' +
+            _xID + ' div._result+div._result,' + _xID + ' ._resultMore {border-top: 1px solid #aaccff;}' +
+            _xID + ' div._result,.GoogleSpecial>div{margin-bottom:5px;}' +
+            _xID + ' .GoogleSpecial a {margin-left:0px;}';// + _xID + ':hover{width:400px !important;border-left: 2px solid #7799cc;}';
         var ex_style = '._external {color: black!important;} ._external:after {content:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAFVBMVEVmmcwzmcyZzP8AZswAZv////////9E6giVAAAAB3RSTlP///////8AGksDRgAAADhJREFUGFcly0ESAEAEA0Ei6/9P3sEcVB8kmrwFyni0bOeyyDpy9JTLEaOhQq7Ongf5FeMhHS/4AVnsAZubxDVmAAAAAElFTkSuQmCC");}';
-        var tablestyle = _xID + ' td{padding: 5px 0 5px 13px !important;color:#000!important;}'
-            + _xID + ' tr+tr>td{padding: 0px 0 8px 13px !important;}' + _xID + ' td>h3{margin-left:-8px;line-height:1.3em;}';
-        var li_style = _xID + ' div._result>li {padding: 5px 0 8px 13px !important;background-image:none;}'
-            + _xID + ' li h3>a:first-child,' + _xID + ' li h3>em {font-size: 13pt !important;margin-left: -8px;}'
-            + _xID + ' li>div, ' + _xID + ' li>p {font-size: small;}';
+        var tablestyle = _xID + ' td{padding: 5px 0 5px 13px !important;color:#000!important;}' +
+            _xID + ' tr+tr>td{padding: 0px 0 8px 13px !important;}' + _xID + ' td>h3{margin-left:-8px;line-height:1.3em;}';
+        var li_style = _xID + ' div._result>li {padding: 5px 0 8px 13px !important;background-image:none;}' +
+            _xID + ' li h3>a:first-child,' + _xID + ' li h3>em {font-size: 13pt !important;margin-left: -8px;}' +
+            _xID + ' li>div, ' + _xID + ' li>p {font-size: small;}';
         var mat_style = _xID + ' div._match {background: #eee; background:-moz-linear-gradient(top, #eee, white); background:-webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(white)); max-height:1.1em;}' + _xID + ' div._match:hover{max-height: 1000px;}';
         var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;}';
         var bd_style = /*Baidu link BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
         var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size: 13pt !important; font-weight: 400 !important;}';
-        var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div {padding: 7px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3 {margin-left:-8px;} div[id^="sogouResult_"] .tit-ico {background-position: left 1px;background-repeat: no-repeat;padding-left: 20px;}';
         var sz_style = /*360 style*/'div[id^="360Result_"] h3>a>img {width:16px !important; height:16px !important;}';
+        var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div {padding: 5px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3 {margin-left:-8px;} div[id^="sogouResult_"] .tit-ico {background-position: left 1px;background-repeat: no-repeat;padding-left: 20px;}';
+        var gc_style = /*GoogleCN style*/'div[id^="gcnResult_"]>div{padding: 5px 0 8px 13px !important; margin:0;} div[id^="gcnResult_"]  div[class="f kv _SWb"] {height:18px !important; line-height:16px !important; position: !important;}';
 
         // Get keyword
+        var googlekeyword;
         _q = _q.slice(1).replace('#', '&');
         if (_q.length > 0) {
             var qspairs = _q.split('&');
-            for (k = 0; k < qspairs.length; k++) {
-                if (qspairs[k].indexOf('q=') == 0) { var googlekeyword = qspairs[k].substring(2); break; }
+            for (let k = 0; k < qspairs.length; k++) {
+                if (qspairs[k].indexOf('q=') == 0) { googlekeyword = qspairs[k].substring(2); break; }
             }
         }  //log('115:'+googlekeyword);
 
@@ -134,11 +134,11 @@
         googleframe.style.position = 'relative';
         var googlestyle = '#res>h2+div,#res>div.e,div#navcnt,div.clr{max-width: 840px !important;}#res{max-width:1400px!important;}#iur{height:auto!important;}span.bl{display:none!important;}span.gl{white-space:normal!important;}#nyc{z-index:11!important;}.ds{z-index:9!important;}.mw{max-width:95%;}';
 
-        var A_hili_s = new Array();
-        var A_xS_box = new Array();
+        var A_hili_s = [];
+        var A_xS_box = [];
 
-        for (var a = 0; a < A_xSearch_l; a++) {
-            A_xS_box[a] = new Array();
+        for (let a = 0; a < A_xSearch_l; a++) {
+            A_xS_box[a] = [];
             A_xSearch[a][3] = A_xSearch[a][3].replace('--keyword--', googlekeyword);
             A_hili_s[a] = _xID + ' ' + A_xSearch[a][5];
         }
@@ -147,30 +147,29 @@
         var hili_style = A_hili_s.join(',') + '{color: #CC0033 !important;}';
 
         //fix google onebox result
-        var gm_style = /*Google Onebox right-sided result*/ 'div#rhscol {min-width:0px!important;} \
-    div#rhs {position:absolute!important; top:0px; margin-left:0px!important; max-width:500px!important; width:auto!important; transition:transform 0.2s ease 0.3s; transform:scale(0.35); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0.3s; -webkit-transform:scale(0.35); -webkit-transform-origin:0 0; z-index: 30000;} \
-    #rhs .rhsvw {max-width:420px!important; margin-top:0!important; border-bottom:1px solid #d7d7d7!important;} \
-    #rhs #rhs_block {width:auto!important;} \
-    #rhs #rhs_block>ol>li>div {margin-bottom:0!important;background:white;} \
-    div#lu_pinned_rhs {overflow:visible!important;} \
-    #rhs div#lu_pinned_rhs .rhsvw {width:366px!important; padding:0!important;} \
-    #rhs div#lu_pinned_rhs .rhsvw>div {margin:0!important;} \
-    div#rhs:hover {height:auto!important; transform:scale(1);} \
-    #rhs_block {width:auto!important; height:auto!important;} \
-    ._T2 {padding-bottom: 0px!important;}';
-
+        var gm_style = /*Google Onebox right-sided result*/ `div#rhscol {min-width:0px!important;}
+            div#rhs {position:absolute!important; top:0px; margin-left:0px!important; max-width:500px!important; width:auto!important; transition:transform 0.2s ease 0.3s; transform:scale(0.35); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0.3s; -webkit-transform:scale(0.35); -webkit-transform-origin:0 0; z-index: 30000;}
+            #rhs .rhsvw {max-width:420px!important; margin-top:0!important; border-bottom:1px solid #d7d7d7!important;}
+            #rhs #rhs_block {width:auto!important;}
+            #rhs #rhs_block>ol>li>div {margin-bottom:0!important;background:white;}
+            div#lu_pinned_rhs {overflow:visible!important;}
+            #rhs div#lu_pinned_rhs .rhsvw {width:366px!important; padding:0!important;}
+            #rhs div#lu_pinned_rhs .rhsvw>div {margin:0!important;}
+            div#rhs:hover {height:auto!important; transform:scale(1);}
+            #rhs_block {width:auto!important; height:auto!important;}
+            ._T2 {padding-bottom: 0px!important;}`;
 
         // Insert CSS
         var headID = document.getElementsByTagName("head")[0];
         var cssNode = creaElemIn('style', headID);
         cssNode.type = 'text/css';
-        cssNode.innerHTML = close_style + glo_style + ex_style + tablestyle + li_style + hili_style + googlestyle + mat_style + gs_style + bd_style + bg_style + sg_style + sz_style + gm_style;
+        cssNode.innerHTML = close_style + glo_style + ex_style + tablestyle + li_style + hili_style + googlestyle + mat_style + gs_style + bd_style + bg_style + sz_style + sg_style + gm_style + gc_style;
 
         // Prepare links
         var lis = document.evaluate('//li[@class="g"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
         var gooRes = [], gooRelnkh = [], gooResNo = 0;
         var speIDs = /imagebox_bigimages|imagebox|newsbox|videobox|blogbox/;
-        for (h = 0; h < lis.snapshotLength; h++) {
+        for (let h = 0; h < lis.snapshotLength; h++) {
             if (speIDs.test(lis.snapshotItem(h).id)) continue;
             gooRes.push(lis.snapshotItem(h));
             gooResNo++;
@@ -184,7 +183,7 @@
         moveGoogleSpecialResult();
 
         // Add results
-        for (var l = 0; l < A_xSearch_l; l++) {
+        for (let l = 0; l < A_xSearch_l; l++) {
             addresult(A_xSearch[l], A_xS_box[l]);
         }
 
@@ -197,9 +196,8 @@
         // FUNCTIONS
         // Send a request
         function addresult(A_x, A_elem) { //log('187:'+A_x[3]);
-            var timeout = function () { for (i = 0; i < resultNumber; i++) { set(A_elem[i], (i == 0) ? '-Timeout!-' : ''); } };
+            var timeout = function () { for (let i = 0; i < resultNumber; i++) { set(A_elem[i], (i == 0) ? '-Timeout!-' : ''); } };
             var errortimer = setTimeout(timeout, resultTimeout);
-
             var option = {
                 method: "GET",
                 url: A_x[3],
@@ -209,16 +207,16 @@
                     _Node.innerHTML = _h.responseText;
                     initresult(A_x[4], _Node, A_elem, A_x[0]);
                 }
-            }
+            };
             GM_xmlhttpRequest(option);
         }
 
         // Initialize results
         function initresult(_xpath, _Node, A_elem, sname) {
             var _result = [], _resultLink, _resultLinkHref;
-            for (i = 0; i < 10; i++) { _result[i] = (i == 0) ? '-No-Result-' : ''; }
+            for (let i = 0; i < 10; i++) { _result[i] = (i == 0) ? '-No-Result-' : ''; }
 
-            for (i = 0, j = 0; i < 12; i++) { //i for actual results, j for accepted results that go to containers
+            for (let i = 0, j = 0; i < 12; i++) { //i for actual results, j for accepted results that go to containers
                 var i_xpath = _xpath.replace('--i--', (i + 1));
                 var _h_re = document.evaluate(i_xpath, _Node, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
                 //log(sname+" i "+i);
@@ -226,12 +224,6 @@
                     if (j <= resultNumber && resultNumber != 10) A_elem[resultNumber].parentNode.className = '_no_result';
                     break;
                 } else {  //log(sname+" j "+j);
-                    //GCN url fix
-                    if (sname == 'GoogleCN') fixgcn(_h_re);
-
-                    //Baidu url fix
-                    if (sname == 'Baidu') fixbd(_h_re);
-
                     //Bing img url fix
                     if (sname == 'Bing') {
                         fixbmg(_h_re);
@@ -247,10 +239,10 @@
                     // check link
                     _resultLinks = _h_re.getElementsByTagName('a');
                     if (!_resultLinks[0]) continue;
-                    var _resultLink = (_resultLinks[0].href) ? _resultLinks[0] : _resultLinks[1]; //deal with my Google Link Preview [hzhbest mod]
+                    _resultLink = (_resultLinks[0].href) ? _resultLinks[0] : _resultLinks[1]; //deal with my Google Link Preview [hzhbest mod]
                     if (_resultLink) {
                         _resultLinkHref = _resultLink.href.toLowerCase();
-                        for (p in gooRelnkh) {
+                        for (let p in gooRelnkh) {
                             if (_resultLinkHref == gooRelnkh[p] || (sname == 'Bing' && _resultLinkHref + '/' == gooRelnkh[p])) {  //deal with bing's result url
                                 A_elem[j].className = '_match';
                                 // A_elem[i].title = 'Google Result #' + (Number(p)+1);
@@ -270,23 +262,23 @@
                 }
 
             }
-            for (i = 0; i < 10; i++) {
+            for (let i = 0; i < 10; i++) {
                 set(A_elem[i], _result[i]);
                 if (_result[i]) A_elem[i].className += ' _result';
             }
-
         }
 
         // Construct result boxes
         function resultbox(dest, _l) {
             //main frame
-            b = creaElemIn('div', dest);
-            b.id = _ID;
-            b.setAttribute("style", bstyle);
-
+            if (_l != 0) {
+                b = creaElemIn('div', dest);
+                b.id = _ID;
+                b.setAttribute("style", bstyle);
+            }
             //engine frame
             var c_first = true;
-            for (var j = 0; j < _l; j++) {
+            for (let j = 0; j < _l; j++) {
                 //name frame
                 c = creaElemIn('div', b);
                 c.setAttribute('style', cstyle);
@@ -296,16 +288,16 @@
                 d.href = A_xSearch[j][3];
                 d.className = '_external';
                 if (c_first) { //close button on first engine name frame
-                    close = creaElemIn('a', c);
-                    close.href = '#';
-                    close.className = 'close';
-                    close.addEventListener('click', command_close, false);
-                    close.innerHTML = 'X';
-                    close.title = '关闭';
+                    close_button = creaElemIn('a', c);
+                    close_button.href = '#';
+                    close_button.className = 'close';
+                    close_button.addEventListener('click', command_close, false);
+                    close_button.innerHTML = 'X';
+                    close_button.title = '关闭';
                     c_first = false;
                 }
                 //result frame
-                for (var k = 0; k < resultNumber; k++) {
+                for (let k = 0; k < resultNumber; k++) {
                     A_xS_box[j][k] = creaElemIn('div', b);
                     A_xS_box[j][k].id = A_xSearch[j][2] + '_' + (k + 1);
                     A_xS_box[j][k].innerHTML = (k == 0) ? 'Loading...' : '...';
@@ -315,7 +307,7 @@
                 e = creaElemIn('div', b);
                 e.className = '_resultMore _re_hide';
                 e.id = A_xSearch[j][2] + 'More';
-                for (var k = resultNumber; k < 10; k++) {
+                for (let k = resultNumber; k < 10; k++) {
                     A_xS_box[j][k] = creaElemIn('div', e);
                     A_xS_box[j][k].id = A_xSearch[j][2] + '_' + (k + 1);
                 }
@@ -349,7 +341,8 @@
 
         // Get full HTML nodes in string
         function getoutterHTML(elem) {
-            var a = elem.attributes, str = "<" + elem.tagName, i = 0; for (; i < a.length; i++)
+            var a = elem.attributes, str = "<" + elem.tagName;
+            for (let i = 0; i < a.length; i++)
                 if (a[i].specified)
                     str += " " + a[i].name + '="' + a[i].value + '"';
             if (!canHaveChildren(elem))
@@ -366,43 +359,22 @@
             obj.appendChild(content);
         }
 
-        // "修复"GoogleCN链接
-        function fixgcn(_resultcontent) {
-            var Links = _resultcontent.getElementsByTagName('a');
-            if (!Links[0]) return;
-            for (_i = 0; _i < Links.length; _i++) {
-                if (Links[_i].href && Links[_i].href.match(/^http:\/\/www\.google\..*\/url\?q=/i))
-                    Links[_i].href = Links[_i].href.replace(/^http:\/\/www\.google\..*\/url\?q=(.*?)&.*/i, "$1");
-            }
-        }
-
-        // "修复"百度Https链接
-        function fixbd(_resultcontent) {
-            var Links = _resultcontent.getElementsByTagName('a');
-            if (!Links[0]) return;
-            for (_i = 0; _i < Links.length; _i++) {
-                if (Links[_i].href && Links[_i].href.indexOf('https://www.baidu.com/link') == 0)
-                    Links[_i].href = Links[_i].href.replace('https://www', 'http://www');
-            }
-        }
-
         // 修复Bing图片地址
         function fixbmg(_resultcontent) {
             var Imgs = _resultcontent.getElementsByTagName('img');
             if (!Imgs[0]) return;
-            for (_i = 0; _i < Imgs.length; _i++) {
+            for (let _i = 0; _i < Imgs.length; _i++) {
                 if (Imgs[_i].src && Imgs[_i].src.indexOf('http://') != 0)
                     Imgs[_i].src = 'http://www.bing.com' + Imgs[_i].src;
             }
         }
-
 
         // Move Google special results right
         function moveGoogleSpecialResult() {
             var sb = b.insertBefore(document.createElement('div'), b.firstChild);
             sb.className = 'GoogleSpecial';
             var spReIDs = ['imagebox_bigimages', 'imagebox', 'newsbox', 'videobox', 'blogbox']; //lclbox,
-            for (i = 0; i < spReIDs.length; i++) {
+            for (let i = 0; i < spReIDs.length; i++) {
                 var sr = document.getElementById(spReIDs[i]);
                 if (sr) {
                     if (!!sr.previousSibling && sr.previousSibling.className == 'head') sr.insertBefore(sr.previousSibling, sr.firstChild);
@@ -414,7 +386,7 @@
                     }
                     if (sr.id == 'videobox') {
                         var vre = document.evaluate('//div[@class="vresult"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-                        for (j = 0; j < vre.snapshotLength; j++) {
+                        for (let j = 0; j < vre.snapshotLength; j++) {
                             sr.appendChild(vre.snapshotItem(j));
                         }
                     }
@@ -451,5 +423,4 @@
         GM_log(message);
         // }
     }
-
 })();

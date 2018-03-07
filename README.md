@@ -14,4 +14,5 @@ Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web searc
 * 2018.03.02 v1.5.2：微调了页面布局，现在右侧的外部搜索结果不再会遮挡住左侧的搜索结果了，调整了Google Knowledge Graph在最左侧的缩放倍数。
 * 2018.03.04 v1.5.3：启用并修正了360搜索，调整了外部搜索引擎的显示顺序，将HTTP改成了HTTPS访问。
 * 2018.03.05 v1.5.4：删除了有道和中搜搜索。
-* 2018.03.05 v1.5.5：@include匹配了Google的二级域名，启用并修正了GoogleCN（https://www.google.com.hk）搜索，更新了外部搜索引擎的URL参数，稍微优化了一下代码。
+* 2018.03.05 v1.5.5：@include匹配了Google的二级域名，启用并修正了GoogleCN搜索，更新了外部搜索引擎的URL参数，稍微优化了一下代码。
+* 2018.03.06 v1.5.6：微调了页面布局，修正了GoogleCN的显示问题，修正了百度显示百度贴吧时图片过大的问题。

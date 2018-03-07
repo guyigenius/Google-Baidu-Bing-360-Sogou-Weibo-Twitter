@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
 // @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
-// @version     1.5.5
+// @version     1.5.6
 // @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。
 // @include     /^https:\/\/www\.google\..*?q=.*?$/
 // @license     MPL
@@ -91,7 +91,7 @@
         var glo_style = _xID + ' p, ' + _xID + ' ul {margin: 0; padding:0;}' +
             _xID + ' a{color:#2626A8;}' + _xID + ' li{list-style:none outside none;}' +
             _xID + '{line-height: 130%;border-bottom:1px solid #AACCFF;border-left:1px dotted #C9D7F1;}' +
-            _xID + ' div._result *{position:relative!important;}' +
+            // _xID + ' div._result *{position:relative!important;}' +
             _xID + ' div._result, .GoogleSpecial>div{max-height:120px;background:white;overflow:hidden;transition:max-height 0.2s ease 1s;}' +
             _xID + ' ._resultMore{max-height:none!important;}' +
             _xID + ' div._result h3, ' + _xID + ' div._result h2{font-size:13pt!important; border-bottom: 1px solid white; margin-bottom:2px;}' +
@@ -117,7 +117,7 @@
         var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size: 13pt !important; font-weight: 400 !important;}';
         var sz_style = /*360 style*/'div[id^="360Result_"] h3>a>img {width:16px !important; height:16px !important;}';
         var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div {padding: 5px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3 {margin-left:-8px;} div[id^="sogouResult_"] .tit-ico {background-position: left 1px;background-repeat: no-repeat;padding-left: 20px;}';
-        var gc_style = /*GoogleCN style*/'div[id^="gcnResult_"]>div{padding: 5px 0 8px 13px !important; margin:0;} div[id^="gcnResult_"]  div[class="f kv _SWb"] {height:18px !important; line-height:16px !important; position: !important;}';
+        var gc_style = /*GoogleCN style*/'div[id^="gcnResult_"]>div{padding: 5px 0 8px 13px !important; margin:0;} div[id^="gcnResult_"]  div[class="f kv _SWb"] {height:18px !important; line-height:16px !important;}';
 
         // Get keyword
         var googlekeyword;
@@ -233,6 +233,12 @@
                     //Baidu result filter
                     //if (sname == 'Baidu' && _h_re.className == 'result-op') continue;
                     if (sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('app.baidu.com/') != -1) continue;
+
+                    //Baidu Tieba img width fix
+                    if(sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('tieba.baidu.com/') != -1) {
+                        let Imgs = _h_re.getElementsByClassName('c-img4');
+                        Imgs[0].setAttribute('width', '75px');
+                    }
 
                     _result[j] = getoutterHTML(_h_re);
 

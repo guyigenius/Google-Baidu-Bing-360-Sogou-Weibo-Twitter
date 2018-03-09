@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
 // @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
-// @version     1.5.6
+// @version     1.5.7
 // @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。
 // @include     /^https:\/\/www\.google\..*?q=.*?$/
 // @license     MPL
@@ -92,7 +92,7 @@
             _xID + ' a{color:#2626A8;}' + _xID + ' li{list-style:none outside none;}' +
             _xID + '{line-height: 130%;border-bottom:1px solid #AACCFF;border-left:1px dotted #C9D7F1;}' +
             // _xID + ' div._result *{position:relative!important;}' +
-            _xID + ' div._result, .GoogleSpecial>div{max-height:120px;background:white;overflow:hidden;transition:max-height 0.2s ease 1s;}' +
+            _xID + ' div._result, .GoogleSpecial>div{max-height:152px;background:white;overflow:hidden;transition:max-height 0.2s ease 1s;}' +
             _xID + ' ._resultMore{max-height:none!important;}' +
             _xID + ' div._result h3, ' + _xID + ' div._result h2{font-size:13pt!important; border-bottom: 1px solid white; margin-bottom:2px;}' +
             _xID + ' div._result:hover, .GoogleSpecial>div:hover{max-height: 100000px; margin-bottom:0px; padding-bottom:5px; background: #F0F7F9; transition:max-height 0.2s ease 0.1s;}' +
@@ -112,7 +112,7 @@
             _xID + ' li h3>a:first-child,' + _xID + ' li h3>em {font-size: 13pt !important;margin-left: -8px;}' +
             _xID + ' li>div, ' + _xID + ' li>p {font-size: small;}';
         var mat_style = _xID + ' div._match {background: #eee; background:-moz-linear-gradient(top, #eee, white); background:-webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(white)); max-height:1.1em;}' + _xID + ' div._match:hover{max-height: 1000px;}';
-        var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;}';
+        var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;} .GoogleSpecial div[id^="imagebox_bigimages"]{margin: 0px !important;} .GoogleSpecial g-section-with-header{margin: 0px;}';
         var bd_style = /*Baidu link BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
         var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size: 13pt !important; font-weight: 400 !important;}';
         var sz_style = /*360 style*/'div[id^="360Result_"] h3>a>img {width:16px !important; height:16px !important;}';
@@ -157,7 +157,8 @@
             #rhs div#lu_pinned_rhs .rhsvw>div {margin:0!important;}
             div#rhs:hover {height:auto!important; transform:scale(1);}
             #rhs_block {width:auto!important; height:auto!important;}
-            ._T2 {padding-bottom: 0px!important;}`;
+            ._T2 {padding-bottom: 0px!important;}
+            div#rhs .kp-blk, .rhsvw{background-color: white;}`;
 
         // Insert CSS
         var headID = document.getElementsByTagName("head")[0];

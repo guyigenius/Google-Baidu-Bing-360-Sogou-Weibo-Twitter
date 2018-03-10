@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
 // @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
-// @version     1.5.8
+// @version     1.5.9
 // @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。
 // @include     /^https:\/\/www\.google\..*?q=.*?$/
 // @license     MPL
@@ -46,11 +46,11 @@
     //        Al_xSearch[x][5] - the highlight pattern (selector) | 高亮部分的格式（选择器）。
     //        x - the displaying order. | 显示顺序。
     var Al_xSearch = [];
-    Al_xSearch.push(['Baidu', 1, "baiduResult", 'https://www.baidu.com/s?wd=--keyword--', '//*[@id="--i--"]', 'em']);
-    Al_xSearch.push(['Bing', 1, "bingResult", 'https://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
-    Al_xSearch.push(['360', 1, "360Result", 'https://www.so.com/s?q=--keyword--', '//li[@class="res-list"][--i--]', 'em']);
-    Al_xSearch.push(['Sogou', 1, "sogouResult", 'https://www.sogou.com/web?query=--keyword--', '//div[@class="results"]/div[--i--]', 'em']);
-    Al_xSearch.push(['GoogleCN', 1, "gcnResult", 'http://www.google.com.hk/search?q=--keyword--', '//div[@class="g"][--i--]', 'em']);
+    Al_xSearch.push(['Baidu', 1, 'baiduResult', 'https://www.baidu.com/s?wd=--keyword--', '//*[@id="--i--"]', 'em']);
+    Al_xSearch.push(['Bing', 1, 'bingResult', 'https://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
+    Al_xSearch.push(['360', 1, '360Result', 'https://www.so.com/s?q=--keyword--', '//li[@class="res-list"][--i--]', 'em']);
+    Al_xSearch.push(['Sogou', 1, 'sogouResult', 'https://www.sogou.com/web?query=--keyword--', '//div[@class="results"]/div[--i--]', 'em']);
+    Al_xSearch.push(['GoogleCN', 1, 'gcnResult', 'http://www.google.com.hk/search?q=--keyword--', '//div[@class="g"][--i--]', 'em']);
 
     //  ===Config END | 设置结束===
     var isHash = !!document.location.hash;
@@ -81,42 +81,43 @@
         var gdivs = document.evaluate('//div[@class="s"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
         contentwidth = (!!gdivs) ? gdivs.offsetWidth : 500;  //log(contentwidth);
         var b_width = Math.min(600, gcnt.offsetWidth - (googlecol.offsetLeft + contentwidth + 32 + 30));
-        googlecol.setAttribute('style', 'margin-right: ' + (b_width + 15) + 'px !important;');
+        googlecol.setAttribute('style', 'margin-right:' + (b_width + 15) + 'px !important;');
 
         // Style sheets
         var bstyle = 'position:absolute;top:0px;left:810px;background:white;z-index:10;width:' + b_width + 'px;';
         var cstyle = 'border-top:1px solid #7799cc;background:#aaccff;';
         var close_style = _xID + ' .close{float:right;padding:0 10px;}' +
             _xID + ' .close:hover{outline:1px solid #731616;outline-offset:-1px;background-color:#F28E8E!important;color:#731616!important;}';
-        var glo_style = _xID + ' p, ' + _xID + ' ul {margin: 0; padding:0;}' +
+        var glo_style = _xID + ' p, ' + _xID + ' ul{margin:0; padding:0;}' +
             _xID + ' a{color:#2626A8;}' + _xID + ' li{list-style:none outside none;}' +
-            _xID + '{line-height: 130%;border-bottom:1px solid #AACCFF;border-left:1px dotted #C9D7F1;}' +
+            _xID + '{line-height:130%;border-bottom:1px solid #AACCFF;border-left:1px dotted #C9D7F1;}' +
             // _xID + ' div._result *{position:relative!important;}' +
             _xID + ' div._result, .GoogleSpecial>div{max-height:125px;margin-bottom:5px;background:white;overflow:hidden;transition:max-height 0.2s ease 0.3s;}' +
             _xID + ' ._resultMore{max-height:none!important;}' +
-            _xID + ' div._result h3, ' + _xID + ' div._result h2{font-size:13pt!important; border-bottom: 1px solid white; margin-bottom:2px;}' +
-            _xID + ' div._result:hover, .GoogleSpecial>div:hover{max-height: 100000px; margin-bottom:0px; padding-bottom:5px; background: #F0F7F9; transition:max-height 0.2s ease 0s;}' +
-            _xID + ' div._result:hover h3, ' + _xID + ' div._result:hover h2{border-bottom: 1px solid #a7cDd6;}' +
-            _xID + '>div>*{height: auto!important;}._hilire{background:#ffd!important;background:-moz-linear-gradient(top, #ffd, white)!important;background:-webkit-gradient(linear, 0 0, 0 100%, from(#ffd), to(white))!important;}' +
+            _xID + ' div._result h3, ' + _xID + ' div._result h2{font-size:13pt!important; border-bottom:1px solid white; margin-bottom:2px;}' +
+            _xID + ' div._result:hover, .GoogleSpecial>div:hover{max-height:100000px; margin-bottom:0px; padding-bottom:5px; background:#F0F7F9; transition:max-height 0.2s ease 0s;}' +
+            _xID + ' div._result:hover h3, ' + _xID + ' div._result:hover h2{border-bottom:1px solid #a7cDd6;}' +
+            _xID + '>div>*{height:auto!important;}._hilire{background:#ffd!important;background:-moz-linear-gradient(top, #ffd, white)!important;background:-webkit-gradient(linear, 0 0, 0 100%, from(#ffd), to(white))!important;}' +
             _xID + ' ._re_hide>div,' + _xID + ' ._no_result{display:none;}' +
             _xID + ' ._re_more{display:block;height:20px;width:100%;text-align:center;background:#ddd;cursor:pointer;}' +
             _xID + ' ._re_more:hover{background:#F0F7F9!important;}' +
             _xID + ' ._re_hide ._re_more{background:white;}' +
-            _xID + ' div._result+div._result,' + _xID + ' ._resultMore {border-top: 1px solid #aaccff;}' +
-            _xID + ' .GoogleSpecial a {margin-left:0px;}';// + _xID + ':hover{width:400px !important;border-left: 2px solid #7799cc;}';
-        var ex_style = '._external {color: black!important;} ._external:after {content:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAFVBMVEVmmcwzmcyZzP8AZswAZv////////9E6giVAAAAB3RSTlP///////8AGksDRgAAADhJREFUGFcly0ESAEAEA0Ei6/9P3sEcVB8kmrwFyni0bOeyyDpy9JTLEaOhQq7Ongf5FeMhHS/4AVnsAZubxDVmAAAAAElFTkSuQmCC");}';
-        var tablestyle = _xID + ' td{padding: 5px 0 5px 13px !important;color:#000!important;}' +
-            _xID + ' tr+tr>td{padding: 0px 0 8px 13px !important;}' + _xID + ' td>h3{margin-left:-8px;line-height:1.3em;}';
-        var li_style = _xID + ' div._result>li {padding: 5px 0 8px 13px !important;background-image:none;}' +
-            _xID + ' li h3>a:first-child,' + _xID + ' li h3>em {font-size: 13pt !important;margin-left: -8px;}' +
-            _xID + ' li>div, ' + _xID + ' li>p {font-size: small;}';
-        var mat_style = _xID + ' div._match {background: #eee; background:-moz-linear-gradient(top, #eee, white); background:-webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(white)); max-height:1.1em;}' + _xID + ' div._match:hover{max-height: 1000px;}';
-        var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;} .GoogleSpecial div[id^="imagebox_bigimages"]{margin: 0px !important;} .GoogleSpecial g-section-with-header{margin: 0px;}';
-        var bd_style = /*Baidu link BG img*/'div[id^="baiduResult_"]>div{padding: 5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position: left center;background-repeat: no-repeat; padding-left: 16px;} div[id^="baiduResult_"] img.c-img, div[id^="baiduResult_"] div.c-row div.c-span6, div[id^="baiduResult_"] div[id^="tools_"].c-tools{display:none!important;}';
-        var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size: 13pt !important; font-weight: 400 !important;}';
-        var sz_style = /*360 style*/'div[id^="360Result_"] h3>a>img {width:16px !important; height:16px !important;}';
-        var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div {padding: 5px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3 {margin-left:-8px;} div[id^="sogouResult_"] .tit-ico {background-position: left 1px;background-repeat: no-repeat;padding-left: 20px;}';
-        var gc_style = /*GoogleCN style*/'div[id^="gcnResult_"]>div{padding: 5px 0 8px 13px !important; margin:0;} div[id^="gcnResult_"]  div[class="f kv _SWb"] {height:18px !important; line-height:16px !important;}';
+            _xID + ' div._result+div._result,' + _xID + ' ._resultMore{border-top:1px solid #aaccff;}' +
+            _xID + ' .GoogleSpecial a{margin-left:0px;}';// + _xID + ':hover{width:400px !important;border-left:2px solid #7799cc;}';
+        var ex_style = '._external{color:black!important;} ._external:after{content:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAFVBMVEVmmcwzmcyZzP8AZswAZv////////9E6giVAAAAB3RSTlP///////8AGksDRgAAADhJREFUGFcly0ESAEAEA0Ei6/9P3sEcVB8kmrwFyni0bOeyyDpy9JTLEaOhQq7Ongf5FeMhHS/4AVnsAZubxDVmAAAAAElFTkSuQmCC");}';
+        var tablestyle = _xID + ' td{padding:5px 0 5px 13px !important;color:#000!important;}' +
+            _xID + ' tr+tr>td{padding:0px 0 8px 13px !important;}' + _xID + ' td>h3{margin-left:-8px;line-height:1.3em;}';
+        var li_style = _xID + ' div._result>li{padding:5px 0 8px 13px !important;background-image:none;}' +
+            _xID + ' li h3>a:first-child,' + _xID + ' li h3>em{font-size:13pt !important;margin-left:-8px;}' +
+            _xID + ' li>div, ' + _xID + ' li>p{font-size:small;}';
+        var mat_style = _xID + ' div._match{background:#eee; background:-moz-linear-gradient(top, #eee, white); background:-webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(white)); max-height:1.1em;}' + _xID + ' div._match:hover{max-height:1000px;}';
+        var gs_style = /*Google Special*/'.GoogleSpecial div.newsimg>a>div{position:relative!important;} .GoogleSpecial div[id="imagebox_bigimages"]{margin:0px !important;} .GoogleSpecial g-section-with-header{margin:0px;}';
+        var bd_style = /*Baidu style*/'div[id^="baiduResult_"]>div{padding:5px 0 8px 13px !important;} div[id^="baiduResult_"] h3{margin-left:-8px;line-height:1.3em;} div[id^="baiduResult_"] .favurl{background-position:left center;background-repeat:no-repeat; padding-left:16px;} div[id^="baiduResult_"] div.c-row a.c-span6{float: left;margin-right: 17px;} div[id^="baiduResult_"] div.c-row .g{margin-bottom: 0;}' + 
+            /*Baidu web cache*/'div[id^="baiduResult_"] .f13 .c-tools{display: inline;}';
+        var bg_style = /*Bing style*/'div[id^="bingResult_"] .crch, div[id^="bingResult"] .sb_tsuf{display:none!important;} h2{margin:5px 0; font-size:13pt !important; font-weight:400 !important;}';
+        var sz_style = /*360 style*/'div[id^="360Result_"]{width:calc(540px + 13px);}; div[id^="360Result_"] .res-list{line-height:20px;} div[id^="360Result_"] .res-rich .res-comm-img{float:left; width:120px;} div[id^="360Result_"] .res-rich .res-comm-con{float:right; overflow:hidden; width:408px;} div[id^="360Result_"] div[id="mohe-biu_caipu_food2"] .res-title{overflow:visible !important;}';
+        var sg_style = /*Sogou style*/'div[id^="sogouResult_"]>div{padding:5px 0 8px 13px !important;background-image:none;} div[id^="sogouResult_"]>div>h3{margin-left:-8px;} div[id^="sogouResult_"] .tit-ico{background-position:left 1px;background-repeat:no-repeat;padding-left:20px;}';
+        var gc_style = /*GoogleCN style*/'div[id^="gcnResult_"]>div{padding:5px 0 8px 13px !important; margin:0;}';
 
         // Get keyword
         var googlekeyword;
@@ -131,7 +132,7 @@
         // Prepare frame 1
         var googleframe = document.evaluate('//div[@id="rcnt"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
         googleframe.style.position = 'relative';
-        var googlestyle = '#res>h2+div,#res>div.e,div#navcnt,div.clr{max-width: 840px !important;}#res{max-width:1400px!important;}#iur{height:auto!important;}span.bl{display:none!important;}span.gl{white-space:normal!important;}#nyc{z-index:11!important;}.ds{z-index:9!important;}.mw{max-width:95%;}';
+        var googlestyle = '#res>h2+div,#res>div.e,div#navcnt,div.clr{max-width:840px !important;}#res{max-width:1400px!important;}#iur{height:auto!important;}span.bl{display:none!important;}span.gl{white-space:normal!important;}#nyc{z-index:11!important;}.ds{z-index:9!important;}.mw{max-width:95%;}';
 
         var A_hili_s = [];
         var A_xS_box = [];
@@ -143,24 +144,24 @@
         }
 
         //highlight keyword style
-        var hili_style = A_hili_s.join(',') + '{color: #CC0033 !important;}';
+        var hili_style = A_hili_s.join(',') + '{color:#CC0033 !important;}';
 
         //fix google onebox result
-        var gm_style = /*Google Onebox right-sided result*/ `div#rhscol {min-width:0px!important;}
-            div#rhs {position:absolute!important; top:0px; margin-left:0px!important; max-width:500px!important; width:auto!important; transition:transform 0.2s ease 0.3s; transform:scale(0.35); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0.3s; -webkit-transform:scale(0.35); -webkit-transform-origin:0 0; z-index: 30000;}
-            #rhs .rhsvw {max-width:420px!important; margin-top:0!important; border-bottom:1px solid #d7d7d7!important;}
-            #rhs #rhs_block {width:auto!important;}
-            #rhs #rhs_block>ol>li>div {margin-bottom:0!important;background:white;}
-            div#lu_pinned_rhs {overflow:visible!important;}
-            #rhs div#lu_pinned_rhs .rhsvw {width:366px!important; padding:0!important;}
-            #rhs div#lu_pinned_rhs .rhsvw>div {margin:0!important;}
-            div#rhs:hover {height:auto!important; transition:transform 0.2s ease 0s; transform:scale(1); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0s; -webkit-transform:scale(1); -webkit-transform-origin:0 0;}
-            #rhs_block {width:auto!important; height:auto!important;}
-            ._T2 {padding-bottom: 0px!important;}
-            div#rhs .kp-blk, .rhsvw{background-color: white;}`;
+        var gm_style = /*Google Onebox right-sided result*/ `div#rhscol{min-width:0px!important;}
+            div#rhs{position:absolute!important; top:0px; margin-left:0px!important; max-width:500px!important; width:auto!important; transition:transform 0.2s ease 0.3s; transform:scale(0.35); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0.3s; -webkit-transform:scale(0.35); -webkit-transform-origin:0 0; z-index:30000;}
+            #rhs .rhsvw{max-width:420px!important; margin-top:0!important; border-bottom:1px solid #d7d7d7!important;}
+            #rhs #rhs_block{width:auto!important;}
+            #rhs #rhs_block>ol>li>div{margin-bottom:0!important;background:white;}
+            div#lu_pinned_rhs{overflow:visible!important;}
+            #rhs div#lu_pinned_rhs .rhsvw{width:366px!important; padding:0!important;}
+            #rhs div#lu_pinned_rhs .rhsvw>div{margin:0!important;}
+            div#rhs:hover{height:auto!important; transition:transform 0.2s ease 0s; transform:scale(1); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0s; -webkit-transform:scale(1); -webkit-transform-origin:0 0;}
+            #rhs_block{width:auto!important; height:auto!important;}
+            ._T2{padding-bottom:0px!important;}
+            div#rhs .kp-blk, .rhsvw{background-color:white;}`;
 
         // Insert CSS
-        var headID = document.getElementsByTagName("head")[0];
+        var headID = document.getElementsByTagName('head')[0];
         var cssNode = creaElemIn('style', headID);
         cssNode.type = 'text/css';
         cssNode.innerHTML = close_style + glo_style + ex_style + tablestyle + li_style + hili_style + googlestyle + mat_style + gs_style + bd_style + bg_style + sz_style + sg_style + gm_style + gc_style;
@@ -199,7 +200,7 @@
             var timeout = function () { for (let i = 0; i < resultNumber; i++) { set(A_elem[i], (i == 0) ? '-Timeout!-' : ''); } };
             var errortimer = setTimeout(timeout, resultTimeout);
             var option = {
-                method: "GET",
+                method: 'GET',
                 url: A_x[3],
                 onload: function (_h) {
                     clearTimeout(errortimer);
@@ -219,17 +220,11 @@
             for (let i = 0, j = 0; i < 12; i++) { //i for actual results, j for accepted results that go to containers
                 var i_xpath = _xpath.replace('--i--', (i + 1));
                 var _h_re = document.evaluate(i_xpath, _Node, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-                //log(sname+" i "+i);
-                if (_h_re == null) { //log(sname+" j "+j);
+                //log(sname+' i '+i);
+                if (_h_re == null) { //log(sname+' j '+j);
                     if (j <= resultNumber && resultNumber != 10) A_elem[resultNumber].parentNode.className = '_no_result';
                     break;
-                } else {  //log(sname+" j "+j);
-                    //Bing img url fix
-                    if (sname == 'Bing') {
-                        fixbmg(_h_re);
-                        if (!_h_re.firstChild || (!_h_re.firstChild.firstChild && !_h_re.firstChild.nextSibling) || (_h_re.firstChild.localName == 'script' && !_h_re.firstChild.nextSibling)) continue;
-                    }
-
+                } else {  //log(sname+' j '+j);
                     //Baidu result filter
                     //if (sname == 'Baidu' && _h_re.className == 'result-op') continue;
                     if (sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('app.baidu.com/') != -1) continue;
@@ -237,8 +232,22 @@
                     //Baidu Tieba img width fix
                     if(sname == 'Baidu' && _h_re.getAttribute('mu') && _h_re.getAttribute('mu').indexOf('tieba.baidu.com/') != -1) {
                         let Imgs = _h_re.getElementsByClassName('c-img4');
-                        Imgs[0].setAttribute('width', '75px');
+                        if (Imgs.length !== 0) {
+                            Imgs[0].setAttribute('width', '75px');
+                        }
                     }
+
+                    //Bing img url fix
+                    if (sname == 'Bing') {
+                        fixbmg(_h_re);
+                        if (!_h_re.firstChild || (!_h_re.firstChild.firstChild && !_h_re.firstChild.nextSibling) || (_h_re.firstChild.localName == 'script' && !_h_re.firstChild.nextSibling)) continue;
+                    }
+
+                    //360 img url fix
+                    if (sname == '360') fix360(_h_re);
+                    
+                    //GoogleCN result filter
+                    if (sname == 'GoogleCN' && _h_re.getAttribute('id') && _h_re.getAttribute('id') === 'imagebox_bigimages') continue;
 
                     _result[j] = getoutterHTML(_h_re);
 
@@ -280,7 +289,7 @@
             if (_l != 0) {
                 b = creaElemIn('div', dest);
                 b.id = _ID;
-                b.setAttribute("style", bstyle);
+                b.setAttribute('style', bstyle);
             }
             //engine frame
             var c_first = true;
@@ -347,13 +356,13 @@
 
         // Get full HTML nodes in string
         function getoutterHTML(elem) {
-            var a = elem.attributes, str = "<" + elem.tagName;
+            var a = elem.attributes, str = '<' + elem.tagName;
             for (let i = 0; i < a.length; i++)
                 if (a[i].specified)
-                    str += " " + a[i].name + '="' + a[i].value + '"';
+                    str += ' ' + a[i].name + '="' + a[i].value + '"';
             if (!canHaveChildren(elem))
-                return str + " />";
-            return str + ">" + elem.innerHTML + "</" + elem.tagName + ">";
+                return str + '/>';
+            return str + '>' + elem.innerHTML + '</' + elem.tagName + '>';
         }
         function canHaveChildren(elem) {
             return !/^(area|base|basefont|col|frame|hr|img|br|input|isindex|link|meta|param)$/.test(elem.tagName.toLowerCase());
@@ -370,8 +379,20 @@
             var Imgs = _resultcontent.getElementsByTagName('img');
             if (!Imgs[0]) return;
             for (let _i = 0; _i < Imgs.length; _i++) {
-                if (Imgs[_i].src && Imgs[_i].src.indexOf('http://') != 0)
+                if (Imgs[_i].src && Imgs[_i].src.indexOf('http://') != 0) {
                     Imgs[_i].src = 'http://www.bing.com' + Imgs[_i].src;
+                }
+            }
+        }
+
+        // 修复360图片地址
+        function fix360(_resultcontent) {
+            var Imgs = _resultcontent.getElementsByTagName('img');
+            if (!Imgs[0]) return;
+            for (let _i = 0; _i < Imgs.length; _i++) {
+                if (Imgs[_i].src === '') {
+                    Imgs[_i].src = Imgs[_i].getAttribute('data-isrc');
+                }
             }
         }
 

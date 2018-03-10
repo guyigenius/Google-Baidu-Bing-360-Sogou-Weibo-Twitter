@@ -28,3 +28,4 @@ Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web searc
 * 2018.03.06 v1.5.6：微调了页面布局，修正了GoogleCN的显示问题，修正了百度显示百度贴吧时图片过大的问题。
 * 2018.03.08 v1.5.7：微调了页面布局，设置了Google OneBox的背景色为白色，调整了GoogleSpecial里面Images for的位置。
 * 2018.03.09 v1.5.8：微调了与hover相关的延迟（之前的1s太久了……），README.md添加了使用前后对比示意图。
+* 2018.03.10 v1.5.9：修正了360和百度搜索的相关显示问题，删除了GoogleCN的Image显示。

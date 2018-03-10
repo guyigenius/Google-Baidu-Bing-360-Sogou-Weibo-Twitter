@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
 // @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
-// @version     1.5.9
+// @version     1.5.10
 // @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。
 // @include     /^https:\/\/www\.google\..*?q=.*?$/
 // @license     MPL
@@ -50,7 +50,9 @@
     Al_xSearch.push(['Bing', 1, 'bingResult', 'https://www.bing.com/search?q=--keyword--', '//li[@class="b_algo"][--i--]', 'strong']);
     Al_xSearch.push(['360', 1, '360Result', 'https://www.so.com/s?q=--keyword--', '//li[@class="res-list"][--i--]', 'em']);
     Al_xSearch.push(['Sogou', 1, 'sogouResult', 'https://www.sogou.com/web?query=--keyword--', '//div[@class="results"]/div[--i--]', 'em']);
-    Al_xSearch.push(['GoogleCN', 1, 'gcnResult', 'http://www.google.com.hk/search?q=--keyword--', '//div[@class="g"][--i--]', 'em']);
+    Al_xSearch.push(['GoogleCN', 1, 'gcnResult', 'https://www.google.com.hk/search?q=--keyword--', '//div[@class="g"][--i--]', 'em']);
+    Al_xSearch.push(['Weibo', 1, 'weiboResult', 'https://s.weibo.com/weibo/--keyword--', '//div[@class="WB_cardwrap S_bg2 clearfix"][--i--]', 'em']);
+    Al_xSearch.push(['Twitter', 1, 'twitterResult', 'https://twitter.com/search?q=--keyword--', '//li[@class="js-stream-item stream-item stream-item "][--i--]', 'strong']);
 
     //  ===Config END | 设置结束===
     var isHash = !!document.location.hash;
@@ -215,7 +217,7 @@
         // Initialize results
         function initresult(_xpath, _Node, A_elem, sname) {
             var _result = [], _resultLink, _resultLinkHref;
-            for (let i = 0; i < 10; i++) { _result[i] = (i == 0) ? '-No-Result-' : ''; }
+            for (let i = 0; i < 10; i++) { _result[i] = (i == 0) ? '-No-Result-</br>请点击上方链接进入网站搜索' : ''; }
 
             for (let i = 0, j = 0; i < 12; i++) { //i for actual results, j for accepted results that go to containers
                 var i_xpath = _xpath.replace('--i--', (i + 1));

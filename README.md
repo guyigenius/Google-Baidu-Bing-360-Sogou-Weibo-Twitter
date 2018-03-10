@@ -15,11 +15,6 @@ Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web searc
 
 欢迎在[GitHub](https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter/issues)上反馈Bug或者提出您宝贵的意见和建议！
 
-## 计划任务
-* 微调外部搜索结果页面；
-* 修复微博搜索；
-* 添加Twitter搜索；
-
 ## 更新日志
 * 2018.03.02 v1.5.2：微调了页面布局，现在右侧的外部搜索结果不再会遮挡住左侧的搜索结果了，调整了Google OneBox在最左侧的缩放倍数。
 * 2018.03.04 v1.5.3：启用并修正了360搜索，调整了外部搜索引擎的显示顺序，将HTTP改成了HTTPS访问。
@@ -29,3 +24,4 @@ Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web searc
 * 2018.03.08 v1.5.7：微调了页面布局，设置了Google OneBox的背景色为白色，调整了GoogleSpecial里面Images for的位置。
 * 2018.03.09 v1.5.8：微调了与hover相关的延迟（之前的1s太久了……），README.md添加了使用前后对比示意图。
 * 2018.03.10 v1.5.9：修正了360和百度搜索的相关显示问题，删除了GoogleCN的Image显示。
+* 2018.03.10 v1.5.10：目前来说受个人水平所限微博和Twitter搜索无能为力，只能添加了两个搜索链接，以后如果有机会有能力了再具体修改吧。

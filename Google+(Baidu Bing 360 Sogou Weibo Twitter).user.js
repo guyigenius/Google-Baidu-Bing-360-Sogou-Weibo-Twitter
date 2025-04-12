@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Google+(Baidu Bing 360 Sogou Weibo Twitter)
 // @namespace   https://github.com/guyigenius/Google-Baidu-Bing-360-Sogou-Weibo-Twitter
-// @version     1.5.10
+// @version     1.6.0
 // @description Show results from Baidu, Bing, 360, Sogou, Weibo and Twitter in Google web search. | 在Google网页搜索显示百度、必应、360、搜狗、微博和Twitter的搜索结果。
 // @include     /^https:\/\/www\.google\..*?q=.*?$/
 // @license     MPL
@@ -83,10 +83,10 @@
         var gdivs = document.evaluate('//div[@class="s"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
         contentwidth = (!!gdivs) ? gdivs.offsetWidth : 500;  //log(contentwidth);
         var b_width = Math.min(600, gcnt.offsetWidth - (googlecol.offsetLeft + contentwidth + 32 + 30));
-        googlecol.setAttribute('style', 'margin-right:' + (b_width + 15) + 'px !important;');
+        // googlecol.setAttribute('style', 'margin-right:' + (b_width + 15) + 'px !important;');
 
         // Style sheets
-        var bstyle = 'position:absolute;top:0px;left:810px;background:white;z-index:10;width:' + b_width + 'px;';
+        var bstyle = 'position:relative;background:white;z-index:10;width:' + b_width + 'px;';
         var cstyle = 'border-top:1px solid #7799cc;background:#aaccff;';
         var close_style = _xID + ' .close{float:right;padding:0 10px;}' +
             _xID + ' .close:hover{outline:1px solid #731616;outline-offset:-1px;background-color:#F28E8E!important;color:#731616!important;}';
@@ -149,18 +149,19 @@
         var hili_style = A_hili_s.join(',') + '{color:#CC0033 !important;}';
 
         //fix google onebox result
-        var gm_style = /*Google Onebox right-sided result*/ `div#rhscol{min-width:0px!important;}
-            div#rhs{position:absolute!important; top:0px; margin-left:0px!important; max-width:500px!important; width:auto!important; transition:transform 0.2s ease 0.3s; transform:scale(0.35); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0.3s; -webkit-transform:scale(0.35); -webkit-transform-origin:0 0; z-index:30000;}
-            #rhs .rhsvw{max-width:420px!important; margin-top:0!important; border-bottom:1px solid #d7d7d7!important;}
-            #rhs #rhs_block{width:auto!important;}
-            #rhs #rhs_block>ol>li>div{margin-bottom:0!important;background:white;}
-            div#lu_pinned_rhs{overflow:visible!important;}
-            #rhs div#lu_pinned_rhs .rhsvw{width:366px!important; padding:0!important;}
-            #rhs div#lu_pinned_rhs .rhsvw>div{margin:0!important;}
-            div#rhs:hover{height:auto!important; transition:transform 0.2s ease 0s; transform:scale(1); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0s; -webkit-transform:scale(1); -webkit-transform-origin:0 0;}
-            #rhs_block{width:auto!important; height:auto!important;}
-            ._T2{padding-bottom:0px!important;}
-            div#rhs .kp-blk, .rhsvw{background-color:white;}`;
+        // var gm_style = /*Google Onebox right-sided result*/ `div#rhscol{min-width:0px!important;}
+        //     div#rhs{position:absolute!important; top:0px; margin-left:0px!important; max-width:500px!important; width:auto!important; transition:transform 0.2s ease 0.3s; transform:scale(0.35); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0.3s; -webkit-transform:scale(0.35); -webkit-transform-origin:0 0; z-index:30000;}
+        //     #rhs .rhsvw{max-width:420px!important; margin-top:0!important; border-bottom:1px solid #d7d7d7!important;}
+        //     #rhs #rhs_block{width:auto!important;}
+        //     #rhs #rhs_block>ol>li>div{margin-bottom:0!important;background:white;}
+        //     div#lu_pinned_rhs{overflow:visible!important;}
+        //     #rhs div#lu_pinned_rhs .rhsvw{width:366px!important; padding:0!important;}
+        //     #rhs div#lu_pinned_rhs .rhsvw>div{margin:0!important;}
+        //     div#rhs:hover{height:auto!important; transition:transform 0.2s ease 0s; transform:scale(1); transform-origin:0 0; -webkit-transition:transform 0.2s ease 0s; -webkit-transform:scale(1); -webkit-transform-origin:0 0;}
+        //     #rhs_block{width:auto!important; height:auto!important;}
+        //     ._T2{padding-bottom:0px!important;}
+        //     div#rhs .kp-blk, .rhsvw{background-color:white;}`;
+        var gm_style = ``;
 
         // Insert CSS
         var headID = document.getElementsByTagName('head')[0];
@@ -183,7 +184,8 @@
 
         // Prepare frame 2
         resultbox(googleframe, A_xSearch_l);
-        moveGoogleSpecialResult();
+        // 保持Google越来越多情况各异的汇总结果，不再特殊处理。
+        // moveGoogleSpecialResult();
 
         // Add results
         for (let l = 0; l < A_xSearch_l; l++) {
@@ -289,9 +291,18 @@
         function resultbox(dest, _l) {
             //main frame
             if (_l != 0) {
-                b = creaElemIn('div', dest);
-                b.id = _ID;
-                b.setAttribute('style', bstyle);
+                // 针对Google搜索的特殊处理，多站点搜索结果展示样式，显示在右侧Google汇总信息（id="rhs"）后。
+                // 如果id="rcnt"的googleframe内存在id="rhs"，则直接附加到该节点的子节点列表的末尾处。否则按原始逻辑处理。
+                var rhsFrame = dest.querySelector('#rhs');
+                if (rhsFrame) {
+                    b = creaElemIn('div', rhsFrame);
+                    b.id = _ID;
+                    b.setAttribute('style', bstyle + 'margin-left:-21px;');
+                } else {
+                    b = creaElemIn('div', dest);
+                    b.id = _ID;
+                    b.setAttribute('style', bstyle);
+                }
             }
             //engine frame
             var c_first = true;
@@ -399,31 +410,31 @@
         }
 
         // Move Google special results right
-        function moveGoogleSpecialResult() {
-            var sb = b.insertBefore(document.createElement('div'), b.firstChild);
-            sb.className = 'GoogleSpecial';
-            var spReIDs = ['imagebox_bigimages', 'imagebox', 'newsbox', 'videobox', 'blogbox']; //lclbox,
-            for (let i = 0; i < spReIDs.length; i++) {
-                var sr = document.getElementById(spReIDs[i]);
-                if (sr) {
-                    if (!!sr.previousSibling && sr.previousSibling.className == 'head') sr.insertBefore(sr.previousSibling, sr.firstChild);
-                    if (sr.id == 'imagebox_bigimages') {
-                        var ire = document.evaluate('//div[@id="iur"]/div', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-                        ire.style.height = 'auto';
-                        // var bots = document.getElementById('botstuff');
-                        // sr.appendChild(bots);
-                    }
-                    if (sr.id == 'videobox') {
-                        var vre = document.evaluate('//div[@class="vresult"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-                        for (let j = 0; j < vre.snapshotLength; j++) {
-                            sr.appendChild(vre.snapshotItem(j));
-                        }
-                    }
-                    var sri = creaElemIn('div', sb);
-                    sri.appendChild(sr);
-                }
-            }
-        }
+        // function moveGoogleSpecialResult() {
+        //     var sb = b.insertBefore(document.createElement('div'), b.firstChild);
+        //     sb.className = 'GoogleSpecial';
+        //     var spReIDs = ['imagebox_bigimages', 'imagebox', 'newsbox', 'videobox', 'blogbox']; //lclbox,
+        //     for (let i = 0; i < spReIDs.length; i++) {
+        //         var sr = document.getElementById(spReIDs[i]);
+        //         if (sr) {
+        //             if (!!sr.previousSibling && sr.previousSibling.className == 'head') sr.insertBefore(sr.previousSibling, sr.firstChild);
+        //             if (sr.id == 'imagebox_bigimages') {
+        //                 var ire = document.evaluate('//div[@id="iur"]/div', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
+        //                 ire.style.height = 'auto';
+        //                 // var bots = document.getElementById('botstuff');
+        //                 // sr.appendChild(bots);
+        //             }
+        //             if (sr.id == 'videobox') {
+        //                 var vre = document.evaluate('//div[@class="vresult"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        //                 for (let j = 0; j < vre.snapshotLength; j++) {
+        //                     sr.appendChild(vre.snapshotItem(j));
+        //                 }
+        //             }
+        //             var sri = creaElemIn('div', sb);
+        //             sri.appendChild(sr);
+        //         }
+        //     }
+        // }
 
         // Create and insert an element
         function creaElemIn(tagname, destin) {
